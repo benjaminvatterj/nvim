@@ -5,7 +5,6 @@ local options = {
         "lua",
         "luadoc",
         "markdown",
-        "printf",
         "toml",
         "vim",
         "vimdoc",
