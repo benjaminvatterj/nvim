@@ -18,6 +18,7 @@ lint.linters.luacheck.args = {
 }
 
 lint.linters.flake8.args = {
+    "--ignore=E203",
     "--format=%(path)s:%(row)d:%(col)d:%(code)s:%(text)s",
     "--max-line-length=88",
     "--no-show-source",
