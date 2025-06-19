@@ -1,4 +1,4 @@
-local lint = require("lint")
+local lint = require "lint"
 
 lint.linters_by_ft = {
     lua = { "luacheck" },
@@ -18,7 +18,7 @@ lint.linters.luacheck.args = {
 }
 
 lint.linters.flake8.args = {
-    "--ignore=E203",
+    "--ignore=E203,W503",
     "--format=%(path)s:%(row)d:%(col)d:%(code)s:%(text)s",
     "--max-line-length=88",
     "--no-show-source",
