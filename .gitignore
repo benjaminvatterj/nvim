@@ -1,0 +1,12 @@
+# Ignore OS-generated files
+.DS_Store
+
+# Swap files
+*.swp
+*.swo
+
+# Backup files
+*~
+
+# Plugin manager downloads
+packer_compiled.lua
