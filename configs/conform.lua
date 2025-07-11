@@ -35,14 +35,23 @@ local options = {
 require("conform").setup(options)
 
 -- lua/configs/conform.lua
-local conform = require "conform"
+local conform = require("conform")
 
 -- Create :ConformFormat (no args) to format the current buffer
 vim.api.nvim_create_user_command("ConformFormat", function()
-    conform.format {
+    conform.format({
         async = false,
         timeout_ms = 3000, -- timeout for formatting
         lsp_fallback = true, -- if no formatter, fall back to LSP
-    }
+    })
 end, { desc = "Format buffer with Conform" })
+
+vim.api.nvim_create_user_command("ConformFormatUnlimited", function()
+    conform.format({
+        async = false,
+        timeout_ms = 30000, -- timeout for formatting
+        lsp_fallback = true, -- if no formatter, fall back to LSP
+    })
+end, { desc = "Format buffer with Conform with a longer time limit" })
+
 return options
