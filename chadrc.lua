@@ -12,6 +12,9 @@ M.base46 = {
         -- lighter grey-blue taken from Catppuccin “overlay2” (#a6adc8)
         Comment = { fg = "#a6adc8", italic = true },
         ["@comment"] = { fg = "#a6adc8", italic = true }, -- Treesitter alias
+
+        -- Copilot's ghost text should be faint but still distinguishable
+        CopilotSuggestion = { fg = "#6c7086", italic = true },
     },
 }
 
