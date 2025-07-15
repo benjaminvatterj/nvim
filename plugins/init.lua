@@ -20,7 +20,8 @@ return {
         lazy = false,
         priority = 1000,
         config = function()
-            require("snacks").setup(require("configs.snacks"))
+            -- load our Snacks configuration
+            require("snacks").setup(require("configs.snacks_conf"))
         end,
     },
 
