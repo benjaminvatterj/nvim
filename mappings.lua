@@ -45,3 +45,20 @@ map("v", "<A-Up>", ":m '<-2<CR>gv=gv", { desc = "move block up" })
 --     --  alternative Trouble view (uncomment if you prefer):
 --     -- require("trouble").toggle("lsp_references")
 -- end, { desc = "LSP: list references" })
+
+-- Snacks.nvim
+map("n", "<leader>gb", function()
+  require("snacks.git").blame_line()
+end, { desc = "Git blame current line" })
+
+map("n", "<leader>tt", function()
+  require("snacks.terminal").toggle()
+end, { desc = "Toggle terminal" })
+
+map("n", "<leader>ti", function()
+  require("snacks.toggle").indent()
+end, { desc = "Toggle indent guides" })
+
+-- Jump between LSP references when Snacks.words is enabled
+-- map("n", "]]", function() require("snacks.words").jump(1) end, { desc = "Next reference" })
+-- map("n", "[[", function() require("snacks.words").jump(-1) end, { desc = "Prev reference" })
