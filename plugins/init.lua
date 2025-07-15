@@ -200,6 +200,18 @@ return {
                 },
             })
 
+            -- Ensure Copilot suggestions use a subtle color distinct from comments
+            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#6c7086", italic = true })
+            -- local function set_copilot_hl()
+            --     vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#6c7086", italic = true })
+            -- end
+            -- set_copilot_hl()
+            --
+            -- -- reapply highlight after colorscheme changes
+            -- vim.api.nvim_create_autocmd("ColorScheme", {
+            --     callback = set_copilot_hl,
+            -- })
+
             -- Toggle (<leader>ct) still handy
             vim.keymap.set("n", "<leader>ct", function()
                 if vim.b.copilot_enabled == false then
