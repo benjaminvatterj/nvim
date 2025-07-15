@@ -25,14 +25,16 @@ M.terminal = {
 -- Highlight LSP references and jump between them.
 -- Disabled by default. Uncomment the keymaps in `mappings.lua` to use.
 M.words = {
-    enabled = false,
+    enabled = true,
 }
 
 -- Disable the rest of Snacks features to keep the setup minimal.
 -- bigfile    : skips heavy plugins for huge files
 M.bigfile = { enabled = false }
 -- dashboard  : simple start screen on launch
-M.dashboard = { enabled = false }
+M.dashboard = {
+    enabled = true,
+}
 -- explorer   : minimal file explorer
 M.explorer = { enabled = false }
 -- input      : nicer vim.ui.input prompts

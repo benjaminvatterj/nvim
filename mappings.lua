@@ -26,8 +26,7 @@ map("v", "<A-Up>", ":m '<-2<CR>gv=gv", { desc = "move block up" })
 
 -- 2. Re-map Delete to “delete char under cursor”
 -- vim.keymap.set("i", "<Del>", "<C-o>x",
-  -- { noremap = true, silent = true, desc = "Delete character right" })
-
+-- { noremap = true, silent = true, desc = "Delete character right" })
 
 -- -- F12  → jump to *definition* (or declaration – see note below)
 -- map("n", "<F12>", function()
@@ -48,17 +47,21 @@ map("v", "<A-Up>", ":m '<-2<CR>gv=gv", { desc = "move block up" })
 
 -- Snacks.nvim
 map("n", "<leader>gb", function()
-  require("snacks.git").blame_line()
+    require("snacks.git").blame_line()
 end, { desc = "Git blame current line" })
 
 map("n", "<leader>tt", function()
-  require("snacks.terminal").toggle()
+    require("snacks.terminal").toggle()
 end, { desc = "Toggle terminal" })
 
 map("n", "<leader>ti", function()
-  require("snacks.toggle").indent()
+    require("snacks.toggle").indent()
 end, { desc = "Toggle indent guides" })
 
 -- Jump between LSP references when Snacks.words is enabled
--- map("n", "]]", function() require("snacks.words").jump(1) end, { desc = "Next reference" })
--- map("n", "[[", function() require("snacks.words").jump(-1) end, { desc = "Prev reference" })
+map("n", "]]", function()
+    require("snacks.words").jump(1)
+end, { desc = "Next reference" })
+map("n", "[[", function()
+    require("snacks.words").jump(-1)
+end, { desc = "Prev reference" })
