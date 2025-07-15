@@ -15,6 +15,15 @@ return {
             return {}
         end,
     },
+    {
+        "folke/snacks.nvim",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            require("snacks").setup(require("configs.snacks"))
+        end,
+    },
+
     -----------------------------------------------------------------
     -- nvim-tree: auto-open when Neovim starts with no file,
     --            auto-quit if it’s the last window
