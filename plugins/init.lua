@@ -6,7 +6,7 @@ return {
         opts = function(_, opts)
             dofile(vim.g.base46_cache .. "whichkey")
             opts.on_close = function()
-                vim.cmd("redraw!")
+                vim.cmd "redraw!"
             end
             opts.window = vim.tbl_deep_extend("force", opts.window or {}, {
                 winblend = 0, -- 0 = fully opaque, no terminal redraw glitch
@@ -21,7 +21,7 @@ return {
         priority = 1000,
         config = function()
             -- load our Snacks configuration
-            require("snacks").setup(require("configs.snacks_conf"))
+            require("snacks").setup(require "configs.snacks_conf")
         end,
     },
 
@@ -78,7 +78,7 @@ return {
         "nvim-treesitter/nvim-treesitter",
         event = { "BufReadPre", "BufNewFile" },
         config = function()
-            require("configs.treesitter")
+            require "configs.treesitter"
         end,
     },
 
@@ -87,7 +87,7 @@ return {
         event = { "BufReadPre", "BufNewFile" },
         config = function()
             require("nvchad.configs.lspconfig").defaults()
-            require("configs.lspconfig")
+            require "configs.lspconfig"
         end,
     },
 
@@ -96,7 +96,7 @@ return {
         event = "VeryLazy",
         dependencies = { "nvim-lspconfig" },
         config = function()
-            require("configs.mason-lspconfig")
+            require "configs.mason-lspconfig"
         end,
     },
 
@@ -104,7 +104,7 @@ return {
         "mfussenegger/nvim-lint",
         event = { "BufReadPre", "BufNewFile" },
         config = function()
-            require("configs.lint")
+            require "configs.lint"
         end,
     },
 
@@ -113,7 +113,7 @@ return {
         event = "VeryLazy",
         dependencies = { "nvim-lint" },
         config = function()
-            require("configs.mason-lint")
+            require "configs.mason-lint"
         end,
     },
 
@@ -121,7 +121,7 @@ return {
         "stevearc/conform.nvim",
         event = "BufWritePre",
         config = function()
-            require("configs.conform")
+            require "configs.conform"
         end,
     },
 
@@ -130,14 +130,14 @@ return {
         event = "VeryLazy",
         dependencies = { "conform.nvim" },
         config = function()
-            require("configs.mason-conform")
+            require "configs.mason-conform"
         end,
     },
 
     {
         "hrsh7th/nvim-cmp",
         opts = function(_, opts)
-            local cmp = require("cmp")
+            local cmp = require "cmp"
 
             ----------------------------------------------------------------
             -- 1 KEYS — leave as you had them
@@ -145,7 +145,7 @@ return {
             opts.mapping["<CR>"] = cmp.mapping(function(fb)
                 fb()
             end, { "i", "s" })
-            opts.mapping["<C-y>"] = cmp.mapping.confirm({ select = true })
+            opts.mapping["<C-y>"] = cmp.mapping.confirm { select = true }
             opts.mapping["<C-l>"] = nil -- Copilot keeps this
 
             ----------------------------------------------------------------
@@ -167,7 +167,7 @@ return {
             opts.completion = { keyword_length = 3 } -- start after 3 chars
             opts.view = { entries = { name = "custom", max_item_count = 8 } }
             opts.window = {
-                completion = cmp.config.window.bordered({ max_height = 8 }),
+                completion = cmp.config.window.bordered { max_height = 8 },
                 documentation = cmp.config.window.bordered(),
             }
 
@@ -186,7 +186,7 @@ return {
         event = "InsertEnter",
         build = ":Copilot auth",
         config = function()
-            require("copilot").setup({
+            require("copilot").setup {
                 panel = { enabled = false },
                 suggestion = {
                     enabled = true,
@@ -199,7 +199,7 @@ return {
                         dismiss = "<C-h>",
                     },
                 },
-            })
+            }
 
             -- Ensure Copilot suggestions use a subtle color distinct from comments
             vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#6c7086", italic = true })
@@ -216,11 +216,11 @@ return {
             -- Toggle (<leader>ct) still handy
             vim.keymap.set("n", "<leader>ct", function()
                 if vim.b.copilot_enabled == false then
-                    vim.cmd("Copilot enable")
-                    vim.notify("Copilot ▶ on")
+                    vim.cmd "Copilot enable"
+                    vim.notify "Copilot ▶ on"
                 else
-                    vim.cmd("Copilot disable")
-                    vim.notify("Copilot ⏸ off")
+                    vim.cmd "Copilot disable"
+                    vim.notify "Copilot ⏸ off"
                 end
             end, { desc = "Toggle Copilot" })
         end,
@@ -244,7 +244,7 @@ return {
             {
                 "<leader>xX",
                 function()
-                    require("trouble").toggle("diagnostics")
+                    require("trouble").toggle "diagnostics"
                 end,
                 desc = "Diagnostics (workspace)",
             },
@@ -262,14 +262,14 @@ return {
             {
                 "[d",
                 function()
-                    require("trouble").next({ skip_groups = true, jump = true })
+                    require("trouble").next { skip_groups = true, jump = true }
                 end,
                 desc = "Next diagnostic",
             },
             {
                 "]d",
                 function()
-                    require("trouble").prev({ skip_groups = true, jump = true })
+                    require("trouble").prev { skip_groups = true, jump = true }
                 end,
                 desc = "Prev diagnostic",
             },
