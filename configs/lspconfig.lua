@@ -30,6 +30,10 @@ function M.setup()
                     enable = false, -- Disable all diagnostics from lua_ls
                     -- globals = { "vim" },
                 },
+                format = {
+                    enable = false, -- Use conform.nvim for formatting instead of lua_ls
+                },
+                telemetry = { enable = false },
                 workspace = {
                     library = {
                         vim.fn.expand("$VIMRUNTIME/lua"),
