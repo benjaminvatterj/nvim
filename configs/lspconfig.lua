@@ -2,33 +2,32 @@ local on_attach = require("nvchad.configs.lspconfig").on_attach
 local on_init = require("nvchad.configs.lspconfig").on_init
 local capabilities = require("nvchad.configs.lspconfig").capabilities
 
-local lspconfig = require("lspconfig")
-
--- list of all servers configured.
-lspconfig.servers = {
+local servers = {
     "lua_ls",
     "pyright",
 }
 
--- list of servers configured with default config.
-local default_servers = {
-    -- "pyright",
-}
+vim.g.lspconfig_servers = servers
 
--- lsps with default config
-for _, lsp in ipairs(default_servers) do
-    lspconfig[lsp].setup({
+-- list of servers configured with default config overrides
+local default_servers = {}
+
+local function configure(server, opts)
+    local config = vim.tbl_deep_extend("force", {
         on_attach = on_attach,
         on_init = on_init,
         capabilities = capabilities,
-    })
+    }, opts or {})
+
+    vim.lsp.config(server, config)
+    vim.lsp.enable(server)
 end
 
-lspconfig.lua_ls.setup({
-    on_attach = on_attach,
-    on_init = on_init,
-    capabilities = capabilities,
+for _, server in ipairs(default_servers) do
+    configure(server)
+end
 
+configure("lua_ls", {
     settings = {
         Lua = {
             diagnostics = {

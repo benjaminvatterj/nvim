@@ -1,4 +1,3 @@
-local lspconfig = package.loaded["lspconfig"]
 local mason_lsp = require("mason-lspconfig")
 
 -- List of servers to ignore during install
@@ -14,9 +13,11 @@ local function table_contains(table, value)
     return false
 end
 
+local configured_servers = vim.g.lspconfig_servers or {}
+
 -- Build a list of lsp servers to install minus the ignored list.
 local all_servers = {}
-for _, s in ipairs(lspconfig.servers) do
+for _, s in ipairs(configured_servers) do
     if not table_contains(ignore_install, s) then
         table.insert(all_servers, s)
     end
