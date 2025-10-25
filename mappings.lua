@@ -5,8 +5,19 @@ require("nvchad.mappings")
 local map = vim.keymap.set
 
 map("n", ";", ":", { desc = "CMD enter command mode" })
-map("i", "jk", "<Esc>", { desc = "an extra way of exiting insert" })
-map("i", "<Esc>", "<Esc>", { noremap = true, silent = true, desc = "exit insert" })
+
+local function dismiss_copilot_and_escape()
+    local ok, suggestion = pcall(require, "copilot.suggestion")
+    if ok and suggestion.is_visible() then
+        suggestion.dismiss()
+    end
+
+    local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
+    vim.api.nvim_feedkeys(esc, "n", false)
+end
+
+map("i", "jk", dismiss_copilot_and_escape, { desc = "an extra way of exiting insert" })
+map("i", "<Esc>", dismiss_copilot_and_escape, { desc = "exit insert" })
 
 -- Normal mode
 map("n", "<A-Down>", ":m .+1<CR>==", { desc = "move line down" })

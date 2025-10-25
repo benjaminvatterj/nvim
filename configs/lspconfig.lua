@@ -23,6 +23,46 @@ end
 function M.setup()
     nvchad_lsp.defaults()
 
+    if vim.lsp and vim.lsp.config then
+        vim.lsp.config("stylua", { autostart = false })
+    end
+
+    local get_clients = vim.lsp.get_clients
+    if not get_clients and vim.lsp.get_active_clients then
+        get_clients = function(opts)
+            local clients = vim.lsp.get_active_clients()
+            if not opts or not opts.name then
+                return clients
+            end
+
+            local filtered = {}
+            for _, client in ipairs(clients) do
+                if client.name == opts.name then
+                    table.insert(filtered, client)
+                end
+            end
+
+            return filtered
+        end
+    end
+
+    for _, client in ipairs(get_clients and get_clients { name = "stylua" } or {}) do
+        client.stop(true)
+    end
+
+    local group = vim.api.nvim_create_augroup("DisableStyluaLsp", { clear = true })
+    vim.api.nvim_create_autocmd("LspAttach", {
+        group = group,
+        callback = function(args)
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+            if client and client.name == "stylua" then
+                vim.schedule(function()
+                    client.stop(true)
+                end)
+            end
+        end,
+    })
+
     configure("lua_ls", {
         settings = {
             Lua = {
@@ -30,6 +70,10 @@ function M.setup()
                     enable = false, -- Disable all diagnostics from lua_ls
                     -- globals = { "vim" },
                 },
+                format = {
+                    enable = false, -- Use conform.nvim for formatting instead of lua_ls
+                },
+                telemetry = { enable = false },
                 workspace = {
                     library = {
                         vim.fn.expand("$VIMRUNTIME/lua"),
