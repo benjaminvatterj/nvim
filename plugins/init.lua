@@ -145,7 +145,7 @@ return {
                 fb()
             end, { "i", "s" })
             opts.mapping["<C-y>"] = cmp.mapping.confirm { select = true }
-            opts.mapping["<C-l>"] = nil -- Copilot keeps this
+            -- opts.mapping["<C-l>"] = nil -- reserved for Copilot (disabled)
 
             ----------------------------------------------------------------
             -- 2 DISABLE snippet expansion completely
@@ -173,58 +173,116 @@ return {
             ----------------------------------------------------------------
             -- 5 TURN OFF cmp’s ghost-text so it doesn’t clash with Copilot
             ----------------------------------------------------------------
-            opts.experimental = { ghost_text = false }
+            -- opts.experimental = { ghost_text = false } -- Copilot conflict (disabled)
         end,
     },
 
-    -----------------------------------------------------------------
-    -- Copilot core
-    -----------------------------------------------------------------
-    {
-        "zbirenbaum/copilot.lua",
-        event = "InsertEnter",
-        build = ":Copilot auth",
-        config = function()
-            require("copilot").setup {
-                panel = { enabled = false },
-                suggestion = {
-                    enabled = true,
-                    auto_trigger = true,
-                    debounce = 75,
-                    keymap = {
-                        accept = "<C-l>", -- ← only Copilot uses this key now
-                        next = "<C-]>", -- cycle forward
-                        prev = "<C-[>", -- cycle back
-                        dismiss = "<C-h>",
-                    },
-                },
-            }
-
-            -- Ensure Copilot suggestions use a subtle color distinct from comments
-            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#6c7086", italic = true })
-            -- local function set_copilot_hl()
-            --     vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#6c7086", italic = true })
-            -- end
-            -- set_copilot_hl()
-            --
-            -- -- reapply highlight after colorscheme changes
-            -- vim.api.nvim_create_autocmd("ColorScheme", {
-            --     callback = set_copilot_hl,
-            -- })
-
-            -- Toggle (<leader>ct) still handy
-            vim.keymap.set("n", "<leader>ct", function()
-                if vim.b.copilot_enabled == false then
-                    vim.cmd "Copilot enable"
-                    vim.notify "Copilot ▶ on"
-                else
-                    vim.cmd "Copilot disable"
-                    vim.notify "Copilot ⏸ off"
-                end
-            end, { desc = "Toggle Copilot" })
-        end,
-    },
-
+    -- {
+    --     "zbirenbaum/copilot.lua",
+    --     cmd = "Copilot",
+    --     event = "InsertEnter",
+    --     build = ":Copilot auth",
+    --     opts = {
+    --         panel = { enabled = false },
+    --         suggestion = {
+    --             enabled = true,
+    --             auto_trigger = true, -- like VS Code: suggestions appear automatically
+    --             debounce = 150,
+    --             keymap = {
+    --                 -- Do NOT bind to <C-[> (<Esc>)
+    --                 accept = "<M-l>", -- Alt-l accepts suggestion (safe default)
+    --                 accept_word = "<M-w>", -- optional: accept word
+    --                 accept_line = "<M-;>",
+    --                 next = "<M-]>", -- cycle next suggestion
+    --                 prev = "<M-[>", -- cycle previous suggestion
+    --                 dismiss = "<C-]>", -- dismiss
+    --             },
+    --         },
+    --         filetypes = {
+    --             markdown = true,
+    --             help = false,
+    --             -- you can also selectively disable noisy langs, e.g.:
+    --             -- gitcommit = false,
+    --         },
+    --     },
+    --     config = function(_, opts)
+    --         local copilot = require "copilot"
+    --         copilot.setup(opts)
+    --
+    --         -- Dim ghost text like VS Code suggestions
+    --         pcall(vim.api.nvim_set_hl, 0, "CopilotSuggestion", { link = "Comment" })
+    --
+    --         -- Dismiss suggestions when leaving Insert mode
+    --         local group = vim.api.nvim_create_augroup("CopilotSuggestionCleanup", { clear = true })
+    --         vim.api.nvim_create_autocmd("InsertLeave", {
+    --             group = group,
+    --             callback = function()
+    --                 local ok, suggestion = pcall(require, "copilot.suggestion")
+    --                 if ok then
+    --                     suggestion.dismiss()
+    --                 end
+    --             end,
+    --             desc = "Dismiss Copilot suggestions after leaving insert mode",
+    --         })
+    --
+    --         -- Hide Copilot when the completion menu opens (prevents visual “pushing”)
+    --         local ok_cmp, cmp = pcall(require, "cmp")
+    --         if ok_cmp then
+    --             cmp.event:on("menu_opened", function()
+    --                 local ok, suggestion = pcall(require, "copilot.suggestion")
+    --                 if ok then
+    --                     suggestion.dismiss()
+    --                 end
+    --             end)
+    --         end
+    --
+    --         -- VS Code-like: <Tab> accepts Copilot if visible; otherwise fall back.
+    --         vim.keymap.set("i", "<Tab>", function()
+    --             local ok_s, s = pcall(require, "copilot.suggestion")
+    --             if ok_s and s.is_visible() then
+    --                 s.accept()
+    --                 return ""
+    --             end
+    --             local ok_cmp2, cmp2 = pcall(require, "cmp")
+    --             if ok_cmp2 and cmp2.visible() then
+    --                 cmp2.select_next_item()
+    --                 return ""
+    --             end
+    --             local ok_ls, ls = pcall(require, "luasnip")
+    --             if ok_ls and ls.expand_or_jumpable() then
+    --                 ls.expand_or_jump()
+    --                 return ""
+    --             end
+    --             return "<Tab>"
+    --         end, { expr = true, silent = true, noremap = true, replace_keycodes = false })
+    --
+    --         vim.keymap.set("i", "<S-Tab>", function()
+    --             local ok_cmp2, cmp2 = pcall(require, "cmp")
+    --             if ok_cmp2 and cmp2.visible() then
+    --                 cmp2.select_prev_item()
+    --                 return ""
+    --             end
+    --             local ok_ls, ls = pcall(require, "luasnip")
+    --             if ok_ls and ls.jumpable(-1) then
+    --                 ls.jump(-1)
+    --                 return ""
+    --             end
+    --             return "<S-Tab>"
+    --         end, { expr = true, silent = true, noremap = true, replace_keycodes = false })
+    --
+    --         -- Your toggle stays the same
+    --         vim.keymap.set("n", "<leader>ct", function()
+    --             if vim.b.copilot_enabled == false then
+    --                 vim.cmd "Copilot enable"
+    --                 vim.notify "Copilot ▶ on"
+    --             else
+    --                 vim.cmd "Copilot disable"
+    --                 vim.notify "Copilot ⏸ off"
+    --             end
+    --         end, { desc = "Toggle Copilot" })
+    --     end,
+    -- },
+    --
     {
         "kdheepak/lazygit.nvim",
         cmd = "LazyGit",

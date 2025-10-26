@@ -6,17 +6,7 @@ local map = vim.keymap.set
 
 map("n", ";", ":", { desc = "CMD enter command mode" })
 
-local function exit_insert_mode()
-    local ok, suggestion = pcall(require, "copilot.suggestion")
-    if ok and suggestion.is_visible() then
-        suggestion.dismiss()
-    end
-
-    return vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
-end
-
-map("i", "jk", exit_insert_mode, { expr = true, desc = "an extra way of exiting insert" })
-map("i", "<Esc>", exit_insert_mode, { expr = true, desc = "exit insert" })
+map("i", "jk", "<Esc>", { desc = "an extra way of exiting insert" })
 
 -- Normal mode
 map("n", "<A-Down>", ":m .+1<CR>==", { desc = "move line down" })
