@@ -6,7 +6,7 @@ return {
         opts = function(_, opts)
             dofile(vim.g.base46_cache .. "whichkey")
             opts.on_close = function()
-                vim.cmd "redraw!"
+                vim.cmd("redraw!")
             end
             opts.window = vim.tbl_deep_extend("force", opts.window or {}, {
                 winblend = 0, -- 0 = fully opaque, no terminal redraw glitch
@@ -21,10 +21,60 @@ return {
         priority = 1000,
         config = function()
             -- load our Snacks configuration
-            require("snacks").setup(require "configs.snacks_conf")
+            require("snacks").setup(require("configs.snacks_conf"))
         end,
     },
 
+    -- Markdown / LaTeX previewer
+    {
+      "OXY2DEV/markview.nvim",
+      lazy = false, -- do not lazy-load; load after your colorscheme
+      dependencies = { "nvim-treesitter/nvim-treesitter" },
+      config = function()
+        require("markview").setup({
+          preview = {
+            -- Attach to these filetypes; include 'tex' if you want .tex buffers too
+            filetypes = { "markdown", "quarto", "rmd", "typst", "tex" },
+
+            -- Show previews in these modes; enable hybrid when in insert-mode
+            modes = { "n", "i", "no", "c" },
+            hybrid_modes = { "i" },
+            linewise_hybrid_mode = true,
+            edit_range = { 1, 1 },
+
+            -- IMPORTANT: only 'split' belongs here; the rest goes in the callback below
+            splitview_winopts = { split = "right" },
+
+            -- Use the callback to set window-local options *after* the split opens
+            callbacks = {
+              on_splitview_open = function(_, _, win)
+                -- Markview already sets conceal; keep or tweak as you like
+                vim.wo[win].conceallevel = 3
+                vim.wo[win].concealcursor = "n"
+
+                -- cosmetic tweaks go here (NOT in splitview_winopts)
+                vim.wo[win].number = false
+                vim.wo[win].relativenumber = false
+                vim.wo[win].signcolumn = "no"
+                vim.wo[win].foldcolumn = "0"
+              end,
+            },
+          },
+
+          -- Renderers
+          latex = { enable = true },    -- inline $...$ and block $$...$$
+          markdown = { enable = true }, -- headings, lists, tables, etc.
+        })
+      end,
+
+      -- Handy keymaps (work with which-key in your setup)
+      keys = {
+        { "<leader>mp", "<cmd>Markview toggle<CR>", desc = "Markdown: Preview (buffer)" },
+        { "<leader>mP", "<cmd>Markview Toggle<CR>", desc = "Markdown: Preview (global)" },
+        { "<leader>ms", "<cmd>Markview splitToggle<CR>", desc = "Markdown: Split preview" },
+        { "<leader>mh", "<cmd>Markview HybridToggle<CR>", desc = "Markdown: Hybrid mode" },
+      },
+    },
     -----------------------------------------------------------------
     -- nvim-tree: auto-open when Neovim starts with no file,
     --            auto-quit if it’s the last window
@@ -78,7 +128,7 @@ return {
         "nvim-treesitter/nvim-treesitter",
         event = { "BufReadPre", "BufNewFile" },
         config = function()
-            require "configs.treesitter"
+            require("configs.treesitter")
         end,
     },
 
@@ -86,7 +136,8 @@ return {
         "neovim/nvim-lspconfig",
         event = { "BufReadPre", "BufNewFile" },
         config = function()
-            require("configs.lspconfig").setup()
+            require("nvchad.configs.lspconfig").defaults()
+            require("configs.lspconfig")
         end,
     },
 
@@ -95,7 +146,7 @@ return {
         event = "VeryLazy",
         dependencies = { "nvim-lspconfig" },
         config = function()
-            require "configs.mason-lspconfig"
+            require("configs.mason-lspconfig")
         end,
     },
 
@@ -103,7 +154,7 @@ return {
         "mfussenegger/nvim-lint",
         event = { "BufReadPre", "BufNewFile" },
         config = function()
-            require "configs.lint"
+            require("configs.lint")
         end,
     },
 
@@ -112,7 +163,7 @@ return {
         event = "VeryLazy",
         dependencies = { "nvim-lint" },
         config = function()
-            require "configs.mason-lint"
+            require("configs.mason-lint")
         end,
     },
 
@@ -120,7 +171,7 @@ return {
         "stevearc/conform.nvim",
         event = "BufWritePre",
         config = function()
-            require "configs.conform"
+            require("configs.conform")
         end,
     },
 
@@ -129,14 +180,14 @@ return {
         event = "VeryLazy",
         dependencies = { "conform.nvim" },
         config = function()
-            require "configs.mason-conform"
+            require("configs.mason-conform")
         end,
     },
 
     {
         "hrsh7th/nvim-cmp",
         opts = function(_, opts)
-            local cmp = require "cmp"
+            local cmp = require("cmp")
 
             ----------------------------------------------------------------
             -- 1 KEYS — leave as you had them
@@ -144,8 +195,8 @@ return {
             opts.mapping["<CR>"] = cmp.mapping(function(fb)
                 fb()
             end, { "i", "s" })
-            opts.mapping["<C-y>"] = cmp.mapping.confirm { select = true }
-            -- opts.mapping["<C-l>"] = nil -- reserved for Copilot (disabled)
+            opts.mapping["<C-y>"] = cmp.mapping.confirm({ select = true })
+            opts.mapping["<C-l>"] = nil -- Copilot keeps this
 
             ----------------------------------------------------------------
             -- 2 DISABLE snippet expansion completely
@@ -166,7 +217,7 @@ return {
             opts.completion = { keyword_length = 3 } -- start after 3 chars
             opts.view = { entries = { name = "custom", max_item_count = 8 } }
             opts.window = {
-                completion = cmp.config.window.bordered { max_height = 8 },
+                completion = cmp.config.window.bordered({ max_height = 8 }),
                 documentation = cmp.config.window.bordered(),
             }
 
@@ -178,32 +229,24 @@ return {
     },
 
     {
-      "zbirenbaum/copilot.lua",
-      event = "InsertEnter",
-      build = ":Copilot auth",
-      opts = {
-        panel = { enabled = false },
-        suggestion = {
-          enabled = true,
-          auto_trigger = true,
-          debounce = 75,          -- same as your old config
-          keymap = {
-            accept       = "<C-l>",  -- you only use this
-            accept_word  = false,    -- disable to avoid surprises
-            accept_line  = false,
-            next         = false,    -- don't bind, so nothing conflicts
-            prev         = false,    -- IMPORTANT: avoids <C-[> (= <Esc>) conflict
-            dismiss      = false,    -- <C-h> often equals Backspace; keep off
-          },
-        },
-        filetypes = {
-          markdown = true,
-          help = false,
-        },
-      },
-      config = function(_, opts)
-        local copilot = require("copilot")
-        copilot.setup(opts)
+        "zbirenbaum/copilot.lua",
+        event = "InsertEnter",
+        build = ":Copilot auth",
+        config = function()
+            require("copilot").setup({
+                panel = { enabled = false },
+                suggestion = {
+                    enabled = true,
+                    auto_trigger = true,
+                    debounce = 75,
+                    keymap = {
+                        accept = "<C-l>", -- ← only Copilot uses this key now
+                        next = "<C-]>", -- cycle forward
+                        prev = "<C-[>", -- cycle back
+                        dismiss = "<C-h>",
+                    },
+                },
+            })
 
         ----------------------------------------------------------------
         -- Style ghost text (your old color) + reapply on colorscheme
@@ -214,44 +257,17 @@ return {
         style_copilot()
         vim.api.nvim_create_autocmd("ColorScheme", { callback = style_copilot })
 
-        ----------------------------------------------------------------
-        -- Optional nicety: hide Copilot when the cmp menu opens
-        -- (prevents the ghost text from “pushing” your code visually)
-        ----------------------------------------------------------------
-        local ok_cmp, cmp = pcall(require, "cmp")
-        if ok_cmp then
-          cmp.event:on("menu_opened", function()
-            local ok_s, s = pcall(require, "copilot.suggestion")
-            if ok_s then s.dismiss() end
-          end)
-        end
-
-        ----------------------------------------------------------------
-        -- Optional nicety: dismiss on InsertLeave (no lingering hints)
-        ----------------------------------------------------------------
-        local group = vim.api.nvim_create_augroup("CopilotSuggestionCleanup", { clear = true })
-        vim.api.nvim_create_autocmd("InsertLeave", {
-          group = group,
-          callback = function()
-            local ok_s, s = pcall(require, "copilot.suggestion")
-            if ok_s then s.dismiss() end
-          end,
-          desc = "Dismiss Copilot suggestions after leaving insert mode",
-        })
-
-        ----------------------------------------------------------------
-        -- Your toggle (Normal mode)
-        ----------------------------------------------------------------
-        vim.keymap.set("n", "<leader>ct", function()
-          if vim.b.copilot_enabled == false then
-            vim.cmd("Copilot enable")
-            vim.notify("Copilot ▶ on")
-          else
-            vim.cmd("Copilot disable")
-            vim.notify("Copilot ⏸ off")
-          end
-        end, { desc = "Toggle Copilot" })
-      end,
+            -- Toggle (<leader>ct) still handy
+            vim.keymap.set("n", "<leader>ct", function()
+                if vim.b.copilot_enabled == false then
+                    vim.cmd("Copilot enable")
+                    vim.notify("Copilot ▶ on")
+                else
+                    vim.cmd("Copilot disable")
+                    vim.notify("Copilot ⏸ off")
+                end
+            end, { desc = "Toggle Copilot" })
+        end,
     },
     {
         "kdheepak/lazygit.nvim",
@@ -271,7 +287,7 @@ return {
             {
                 "<leader>xX",
                 function()
-                    require("trouble").toggle "diagnostics"
+                    require("trouble").toggle("diagnostics")
                 end,
                 desc = "Diagnostics (workspace)",
             },
@@ -289,14 +305,14 @@ return {
             {
                 "[d",
                 function()
-                    require("trouble").next { skip_groups = true, jump = true }
+                    require("trouble").next({ skip_groups = true, jump = true })
                 end,
                 desc = "Next diagnostic",
             },
             {
                 "]d",
                 function()
-                    require("trouble").prev { skip_groups = true, jump = true }
+                    require("trouble").prev({ skip_groups = true, jump = true })
                 end,
                 desc = "Prev diagnostic",
             },
