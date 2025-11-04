@@ -245,7 +245,7 @@ return {
                     keymap = {
                         accept = "<C-l>", -- ← only Copilot uses this key now
                         next = "<C-]>", -- cycle forward
-                        prev = "<C-[>", -- cycle back
+                        prev = "<M-[>", -- cycle back (avoid clobbering <Esc>/<C-[>)
                         dismiss = "<C-h>",
                     },
                 },

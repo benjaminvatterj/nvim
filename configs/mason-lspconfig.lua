@@ -27,4 +27,5 @@ table.sort(all_servers)
 mason_lsp.setup({
     ensure_installed = all_servers,
     automatic_installation = false,
+    automatic_enable = false,
 })
