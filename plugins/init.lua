@@ -24,57 +24,57 @@ return {
             require("snacks").setup(require("configs.snacks_conf"))
         end,
     },
-
-    -- Markdown / LaTeX previewer
-    {
-      "OXY2DEV/markview.nvim",
-      lazy = false, -- do not lazy-load; load after your colorscheme
-      dependencies = { "nvim-treesitter/nvim-treesitter" },
-      config = function()
-        require("markview").setup({
-          preview = {
-            -- Attach to these filetypes; include 'tex' if you want .tex buffers too
-            filetypes = { "markdown", "quarto", "rmd", "typst", "tex" },
-
-            -- Show previews in these modes; enable hybrid when in insert-mode
-            modes = { "n", "i", "no", "c" },
-            hybrid_modes = { "i" },
-            linewise_hybrid_mode = true,
-            edit_range = { 1, 1 },
-
-            -- IMPORTANT: only 'split' belongs here; the rest goes in the callback below
-            splitview_winopts = { split = "right" },
-
-            -- Use the callback to set window-local options *after* the split opens
-            callbacks = {
-              on_splitview_open = function(_, _, win)
-                -- Markview already sets conceal; keep or tweak as you like
-                vim.wo[win].conceallevel = 3
-                vim.wo[win].concealcursor = "n"
-
-                -- cosmetic tweaks go here (NOT in splitview_winopts)
-                vim.wo[win].number = false
-                vim.wo[win].relativenumber = false
-                vim.wo[win].signcolumn = "no"
-                vim.wo[win].foldcolumn = "0"
-              end,
-            },
-          },
-
-          -- Renderers
-          latex = { enable = true },    -- inline $...$ and block $$...$$
-          markdown = { enable = true }, -- headings, lists, tables, etc.
-        })
-      end,
-
-      -- Handy keymaps (work with which-key in your setup)
-      keys = {
-        { "<leader>mp", "<cmd>Markview toggle<CR>", desc = "Markdown: Preview (buffer)" },
-        { "<leader>mP", "<cmd>Markview Toggle<CR>", desc = "Markdown: Preview (global)" },
-        { "<leader>ms", "<cmd>Markview splitToggle<CR>", desc = "Markdown: Split preview" },
-        { "<leader>mh", "<cmd>Markview HybridToggle<CR>", desc = "Markdown: Hybrid mode" },
-      },
-    },
+    --
+    -- -- Markdown / LaTeX previewer
+    -- {
+    --   "OXY2DEV/markview.nvim",
+    --   lazy = false, -- do not lazy-load; load after your colorscheme
+    --   dependencies = { "nvim-treesitter/nvim-treesitter" },
+    --   config = function()
+    --     require("markview").setup({
+    --       preview = {
+    --         -- Attach to these filetypes; include 'tex' if you want .tex buffers too
+    --         filetypes = { "markdown", "quarto", "rmd", "typst", "tex" },
+    --
+    --         -- Show previews in these modes; enable hybrid when in insert-mode
+    --         modes = { "n", "i", "no", "c" },
+    --         hybrid_modes = { "i" },
+    --         linewise_hybrid_mode = true,
+    --         edit_range = { 1, 1 },
+    --
+    --         -- IMPORTANT: only 'split' belongs here; the rest goes in the callback below
+    --         splitview_winopts = { split = "right" },
+    --
+    --         -- Use the callback to set window-local options *after* the split opens
+    --         callbacks = {
+    --           on_splitview_open = function(_, _, win)
+    --             -- Markview already sets conceal; keep or tweak as you like
+    --             vim.wo[win].conceallevel = 3
+    --             vim.wo[win].concealcursor = "n"
+    --
+    --             -- cosmetic tweaks go here (NOT in splitview_winopts)
+    --             vim.wo[win].number = false
+    --             vim.wo[win].relativenumber = false
+    --             vim.wo[win].signcolumn = "no"
+    --             vim.wo[win].foldcolumn = "0"
+    --           end,
+    --         },
+    --       },
+    --
+    --       -- Renderers
+    --       latex = { enable = true },    -- inline $...$ and block $$...$$
+    --       markdown = { enable = true }, -- headings, lists, tables, etc.
+    --     })
+    --   end,
+    --
+    --   -- Handy keymaps (work with which-key in your setup)
+    --   keys = {
+    --     { "<leader>mp", "<cmd>Markview toggle<CR>", desc = "Markdown: Preview (buffer)" },
+    --     { "<leader>mP", "<cmd>Markview Toggle<CR>", desc = "Markdown: Preview (global)" },
+    --     { "<leader>ms", "<cmd>Markview splitToggle<CR>", desc = "Markdown: Split preview" },
+    --     { "<leader>mh", "<cmd>Markview HybridToggle<CR>", desc = "Markdown: Hybrid mode" },
+    --   },
+    -- },
     -----------------------------------------------------------------
     -- nvim-tree: auto-open when Neovim starts with no file,
     --            auto-quit if it’s the last window
